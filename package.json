@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "obsidian": "^1.13.1"
+  }
+}
