@@ -18,6 +18,12 @@ interface WeChatFormatSettings {
 		quoteFontSize: string;
 		// Bottom follow area (底部关注区)
 		qrCodeFontSize: string;
+		// Heading styles (标题样式)
+		h2Style: string;
+		h3Style: string;
+		h4Style: string;
+		// Code block border style (代码块边框样式)
+		codeBorderStyle: string;
 		// WeChat Official Account API credentials
 	appId: string;
 	appSecret: string;
@@ -60,11 +66,27 @@ const DEFAULT_SETTINGS: WeChatFormatSettings = {
 		quoteAuthor: '',
 		quoteFontSize: '16px',
 		qrCodeFontSize: '16px',
+		// Heading styles
+		h2Style: 'border-left',
+		h3Style: 'border-bottom',
+		h4Style: 'border-bottom',
+		// Code block border style
+		codeBorderStyle: 'default',
 		appId: '',
 	appSecret: '',
 	author: '',
 	thumbMediaId: '',
 };
+
+
+// ========== Code Block Border Styles ==========
+
+const CODE_BORDER_STYLES: { id: string; label: string }[] = [
+	{ id: 'default', label: '默认（简洁底纹）' },
+	{ id: 'apple', label: '苹果（圆点窗口）' },
+	{ id: 'linux', label: 'Linux（终端风格）' },
+	{ id: 'windows', label: 'Windows（VS Code 风格）' },
+];
 
 // ========== Theme Definitions ==========
 
@@ -112,7 +134,7 @@ const THEMES: Record<string, Theme> = {
 		colors: {
 			primary: '#e67e22', background: '#fefcf7', text: '#5d4037',
 			heading: '#d35400', accent: '#f39c12', border: '#f0e6d3',
-			codeBg: '#fdf6ec', codeText: '#5d4037',
+			codeBg: '#f5e6d0', codeText: '#5d4037',
 			quoteBg: '#fef9ef', quoteBorder: '#e67e22',
 			tableHeader: '#d35400', tableBorder: '#f0e6d3', tableAlt: '#fef9ef',
 		},
@@ -136,12 +158,173 @@ const THEMES: Record<string, Theme> = {
 		colors: {
 			primary: '#5e81ac', background: '#ffffff', text: '#4c566a',
 			heading: '#2e3440', accent: '#88c0d0', border: '#e5e9f0',
-			codeBg: '#f0f2f5', codeText: '#4c566a',
+			codeBg: '#d8dee9', codeText: '#4c566a',
 			quoteBg: '#f0f4f8', quoteBorder: '#5e81ac',
 			tableHeader: '#5e81ac', tableBorder: '#e5e9f0', tableAlt: '#f0f4f8',
 		},
 	},
 };
+
+// ========== Heading Style Definitions ==========
+
+interface HeadingStyleDef {
+	id: string;
+	label: string;
+	css: (c: Theme['colors']) => string[];
+	prependHtml?: (c: Theme['colors']) => string;
+}
+
+const H2_STYLES: HeadingStyleDef[] = [
+	{
+		id: 'border-left',
+		label: '左边框',
+		css: (c) => [
+			`border-left:4px solid ${c.primary}`,
+			`padding-left:12px`,
+		],
+	},
+	{
+		id: 'bottom-line',
+		label: '底部分隔线',
+		css: (c) => [
+			`border-bottom:3px solid ${c.primary}`,
+			`padding-bottom:8px`,
+		],
+	},
+	{
+		id: 'bg-block',
+		label: '背景色块',
+		css: (c) => [
+			`background:${c.primary}40`,
+			`padding:12px 16px`,
+			`border-radius:4px`,
+			`text-align:center`,
+		],
+	},
+	{
+		id: 'double-line',
+		label: '双线装饰',
+		css: (c) => [
+			`text-align:center`,
+			`border-top:2px solid ${c.primary}`,
+			`border-bottom:2px solid ${c.primary}`,
+			`padding:10px 0`,
+		],
+	},
+	{
+		id: 'left-border-grad',
+		label: '左边框渐变',
+		css: (c) => [
+			`border-left:4px solid ${c.primary}`,
+			`padding:6px 0 6px 14px`,
+			`background:linear-gradient(to right, ${c.primary}50, ${c.primary}08)`,
+			`border-radius:0 4px 4px 0`,
+		],
+	},
+	{
+		id: 'icon-number',
+		label: '序号图标',
+		css: (c) => [
+			`display:flex`,
+			`align-items:center`,
+			`gap:12px`,
+		],
+		prependHtml: (c) => `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:${c.primary};color:#fff;font-size:14px;font-weight:700;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 12 13 20 7"></polyline><polyline points="4 13 12 19 20 13"></polyline></svg></span>`,
+	},
+];
+
+const H3_STYLES: HeadingStyleDef[] = [
+	{
+		id: 'border-bottom',
+		label: '底部分隔线',
+		css: (c) => [
+			`border-bottom:2px solid ${c.border}`,
+			`padding-bottom:6px`,
+		],
+	},
+	{
+		id: 'border-left',
+		label: '左边框（细）',
+		css: (c) => [
+			`border-left:3px solid ${c.primary}`,
+			`padding-left:10px`,
+		],
+	},
+	{
+		id: 'label',
+		label: '圆角标签',
+		css: (c) => [
+			`background:${c.primary}`,
+			`color:#ffffff`,
+			`padding:4px 14px`,
+			`border-radius:4px`,
+			`display:inline-block`,
+		],
+	},
+	{
+		id: 'underline',
+		label: '下划线装饰',
+		css: (c) => [
+			`display:inline-block`,
+			`border-bottom:2px solid ${c.primary}`,
+			`padding-bottom:2px`,
+		],
+	},
+];
+
+const H4_STYLES: HeadingStyleDef[] = [
+	{
+		id: 'border-bottom',
+		label: '底部分隔线',
+		css: (c) => [
+			`border-bottom:1px solid ${c.border}`,
+			`padding-bottom:4px`,
+		],
+	},
+	{
+		id: 'bold',
+		label: '纯色加粗',
+		css: (c) => [
+			`color:${c.primary}`,
+		],
+	},
+	{
+		id: 'dot',
+		label: '左侧方点',
+		css: (c) => [
+			`display:flex`,
+			`align-items:center`,
+			`gap:8px`,
+		],
+		prependHtml: (c) => `<span style="display:inline-flex;align-items:center;flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="8" height="8" rx="0" ry="0" fill="${c.primary}"/></svg></span>`,
+	},
+	{
+		id: 'label',
+		label: '圆角标签',
+		css: (c) => [
+			`background:${c.primary}40`,
+			`color:${c.primary}`,
+			`padding:2px 10px`,
+			`border-radius:4px`,
+			`display:inline-block`,
+		],
+	},
+];
+
+const HEADING_STYLE_MAP: Record<string, HeadingStyleDef[]> = {
+	h2: H2_STYLES,
+	h3: H3_STYLES,
+	h4: H4_STYLES,
+};
+
+function getHeadingStyleDef(tag: string, settings: WeChatFormatSettings): HeadingStyleDef | null {
+	const styles = HEADING_STYLE_MAP[tag as keyof typeof HEADING_STYLE_MAP];
+	if (!styles) return null;
+	const key = tag === 'h2' ? settings.h2Style
+		: tag === 'h3' ? settings.h3Style
+		: settings.h4Style;
+	return styles.find(s => s.id === key) || null;
+}
 
 // ========== DOM-based HTML to WeChat Converter ==========
 
@@ -205,6 +388,15 @@ function convertToWeChatHTML(html: string, settings: WeChatFormatSettings): stri
 	return result;
 }
 
+/** Darken a hex color by a given amount */
+function darkenHex(hex: string, amount: number): string {
+	const num = parseInt(hex.replace('#', ''), 16);
+	const r = Math.max(0, (num >> 16) - amount);
+	const g = Math.max(0, ((num >> 8) & 0x00FF) - amount);
+	const b = Math.max(0, (num & 0x0000FF) - amount);
+	return `rgb(${r},${g},${b})`;
+}
+
 function applyStyles(el: HTMLElement, c: Theme['colors'], settings: WeChatFormatSettings, doc: Document): void {
 	// Process children first (depth-first traversal)
 	for (let i = 0; i < el.children.length; i++) {
@@ -215,14 +407,35 @@ function applyStyles(el: HTMLElement, c: Theme['colors'], settings: WeChatFormat
 
 	switch (tag) {
 		case 'h1':
-		case 'h2':
-			setStyle(el, headingStyle(c, tag, true));
+			setStyle(el, headingStyle(c, tag));
 			break;
+		case 'h2':
 		case 'h3':
-		case 'h4':
+		case 'h4': {
+			const styleDef = getHeadingStyleDef(tag, settings);
+			const extraCss = styleDef ? styleDef.css(c) : undefined;
+			// Label style: keep h4 as block, wrap content in a span with inline-block
+			if (tag === 'h4' && styleDef?.id === 'label') {
+				// Use default heading style for h4 (block), wrap content in a <span> for the label
+				setStyle(el, headingStyle(c, tag));
+				const span = doc.createElement('span');
+				span.textContent = el.textContent;
+				setStyle(span, extraCss || []);
+				el.textContent = '';
+				el.appendChild(span);
+			} else {
+				setStyle(el, headingStyle(c, tag, extraCss));
+				if (styleDef?.prependHtml) {
+					const span = doc.createElement('span');
+					span.innerHTML = styleDef.prependHtml(c);
+					el.insertBefore(span, el.firstChild);
+				}
+			}
+			break;
+		}
 		case 'h5':
 		case 'h6':
-			setStyle(el, headingStyle(c, tag, false));
+			setStyle(el, headingStyle(c, tag));
 			break;
 
 		case 'p':
@@ -259,16 +472,118 @@ function applyStyles(el: HTMLElement, c: Theme['colors'], settings: WeChatFormat
 
 			// Wrapper <div> with background
 			const wrapper = doc.createElement('div');
-			setStyle(wrapper, [
+			const borderStyle = settings.codeBorderStyle || 'default';
+			const wrapperStyles = [
 				`background: ${c.codeBg}`,
 				`color: ${c.codeText}`,
 				`border-radius: 4px`,
 				`overflow: hidden`,
 				`margin: 1.5em 0`,
-			]);
+			];
+			if (borderStyle === 'apple' || borderStyle === 'linux' || borderStyle === 'windows') {
+				wrapperStyles.push(`border: 1px solid ${c.border}`);
+			}
+			if (borderStyle === 'apple') {
+				wrapperStyles.push(`box-shadow: 0 2px 8px rgba(0,0,0,0.08)`);
+			}
+			setStyle(wrapper, wrapperStyles);
 
-									// 			// Language label at top of wrapper — same background for WeChat editor fallback
-			if (lang) {
+			// Language label at top of wrapper — plus Apple dots or Linux title bar if selected
+			if (borderStyle === 'apple') {
+				// Apple-style: 3 colored dots using Unicode circles with color (WeChat safe)
+				// Dots and language label in the same row — float: right for language
+				const dotRow = doc.createElement('p');
+				setStyle(dotRow, [
+					`padding: 8px 12px 0 12px`,
+					`margin: 0`,
+					`background: ${c.codeBg}`,
+					`margin-bottom: 0`,
+				]);
+				for (const dotColor of ['#ff5f57', '#febc2e', '#28c840']) {
+					const dot = doc.createElement('span');
+					dot.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="${dotColor}"/></svg>`;
+					setStyle(dot, [
+						`display: inline-flex`,
+						`vertical-align: middle`,
+						`margin-right: 6px`,
+					]);
+					dotRow.appendChild(dot);
+				}
+				// Language label on the right in the same row
+				if (lang) {
+					const langSpan = doc.createElement('span');
+					langSpan.textContent = lang;
+					setStyle(langSpan, [
+						`float: right`,
+						`font-family:'Courier New','Consolas',monospace`,
+						`font-size:0.75em`,
+						`color: ${c.codeText}`,
+					]);
+					dotRow.appendChild(langSpan);
+				}
+				wrapper.appendChild(dotRow);
+			} else if (borderStyle === 'linux') {
+				// Linux terminal style: title bar with colored square buttons using Unicode + color (WeChat safe)
+				const titleBar = doc.createElement('p');
+				setStyle(titleBar, [
+					`padding: 6px 12px`,
+					`margin: 0`,
+					`background: ${c.primary}60`,
+					`color: #ffffff`,
+					`font-size: 0.75em`,
+					`font-family:'Courier New','Consolas',monospace`,
+				]);
+				for (const btnColor of ['#ff5f57', '#febc2e', '#28c840']) {
+					const btn = doc.createElement('span');
+					btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="10" height="10" rx="2" ry="2" fill="${btnColor}"/></svg>`;
+					setStyle(btn, [
+						`display: inline-flex`,
+						`vertical-align: middle`,
+						`margin-right: 6px`,
+					]);
+					titleBar.appendChild(btn);
+				}
+				// Language label on the right
+				if (lang) {
+					const langSpan = doc.createElement('span');
+					langSpan.textContent = lang;
+					setStyle(langSpan, [
+						`float: right`,
+						`opacity: 0.8`,
+					]);
+					titleBar.appendChild(langSpan);
+				}
+				wrapper.appendChild(titleBar);
+			} else if (borderStyle === 'windows') {
+				// Windows VS Code style: accent bar (colored p) + language label on the right
+				// Accent bar: p with background color + padding (WeChat-safe — background on p is preserved)
+				const accentBar = doc.createElement('p');
+				accentBar.textContent = ' ';  // non-breaking space
+				setStyle(accentBar, [
+					`background: ${c.primary}`,
+					`padding: 2px 0`,
+					`margin: 0`,
+					`font-size: 1px`,
+					`line-height: 1`,
+					`color: transparent`,
+				]);
+				wrapper.appendChild(accentBar);
+				if (lang) {
+					const langRow = doc.createElement('p');
+					langRow.textContent = lang;
+					setStyle(langRow, [
+						`padding: 4px 12px 0 12px`,
+						`margin: 0`,
+						`text-align: right`,
+						`color: ${c.codeText}`,
+						`font-family:'Courier New','Consolas',monospace`,
+						`font-size:0.75em`,
+						`line-height: 1.5`,
+					]);
+					wrapper.appendChild(langRow);
+				}
+			} else if (lang) {
+				// Default style: simple language label at top
 				const langP = doc.createElement('p');
 				langP.textContent = lang;
 				setStyle(langP, [
@@ -329,7 +644,8 @@ function applyStyles(el: HTMLElement, c: Theme['colors'], settings: WeChatFormat
 
 				setStyle(lineP, baseStyles);
 				wrapper.appendChild(lineP);
-			}el.parentNode?.replaceChild(wrapper, el);
+			}
+		el.parentNode?.replaceChild(wrapper, el);
 			break;
 		}
 
@@ -511,7 +827,7 @@ function escapeRegex(str: string): string {
 	return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function headingStyle(c: Theme['colors'], tag: string, isMajor: boolean): string[] {
+function headingStyle(c: Theme['colors'], tag: string, extraCss?: string[]): string[] {
 	const sizes: Record<string, string> = {
 		h1: '1.6em', h2: '1.35em', h3: '1.2em',
 		h4: '1.1em', h5: '1em', h6: '0.95em',
@@ -524,12 +840,18 @@ function headingStyle(c: Theme['colors'], tag: string, isMajor: boolean): string
 		`color:${c.heading}`,
 		`line-height:1.4`,
 	];
-	if (isMajor) {
-		styles.push(`border-left:4px solid ${c.primary}`);
-		styles.push(`padding-left:12px`);
+	if (extraCss) {
+		// Use the explicit style definition (for H2/H3/H4 with user-selected styles)
+		styles.push(...extraCss);
 	} else {
-		styles.push(`border-bottom:2px solid ${c.border}`);
-		styles.push(`padding-bottom:6px`);
+		// Default decoration based on heading level
+		if (tag === 'h1' || tag === 'h2') {
+			styles.push(`border-left:4px solid ${c.primary}`);
+			styles.push(`padding-left:12px`);
+		} else {
+			styles.push(`border-bottom:2px solid ${c.border}`);
+			styles.push(`padding-bottom:6px`);
+		}
 	}
 	return styles;
 }
@@ -544,9 +866,6 @@ function paragraphStyle(c: Theme['colors'], settings: WeChatFormatSettings): str
 	}
 	return styles;
 }
-
-// Re-export for use in template literals inside switch
-const doc = document;
 
 // ========== WeChat Official Account API ==========
 
@@ -684,7 +1003,8 @@ class WeChatApi {
 		}
 		return result;
 	}
-	 /**
+
+	/**
 	 * Comprehensive content sanitization for WeChat draft API.
 	 *   - Emoji/special Unicode
 	 *   - app:// / file:// URLs remaining after failed image uploads
@@ -873,6 +1193,58 @@ class WeChatFormatSettingTab extends PluginSettingTab {
 				attr: { style: 'margin:-10px 0 20px 14px;color:#888;font-size:13px;' },
 			});
 		}
+		// H2 heading style
+		new Setting(containerEl)
+			.setName('H2 标题样式')
+			.setDesc('二级标题的装饰风格')
+			.addDropdown((dd) => {
+				H2_STYLES.forEach((s) => dd.addOption(s.id, s.label));
+				dd.setValue(this.plugin.settings.h2Style);
+				dd.onChange(async (v) => {
+					this.plugin.settings.h2Style = v;
+					await this.plugin.saveSettings();
+					this.plugin.refreshPreview();
+				});
+			});
+		// H3 heading style
+		new Setting(containerEl)
+			.setName('H3 标题样式')
+			.setDesc('三级标题的装饰风格')
+			.addDropdown((dd) => {
+				H3_STYLES.forEach((s) => dd.addOption(s.id, s.label));
+				dd.setValue(this.plugin.settings.h3Style);
+				dd.onChange(async (v) => {
+					this.plugin.settings.h3Style = v;
+					await this.plugin.saveSettings();
+					this.plugin.refreshPreview();
+				});
+			});
+		// H4 heading style
+		new Setting(containerEl)
+			.setName('H4 标题样式')
+			.setDesc('四级标题的装饰风格')
+			.addDropdown((dd) => {
+				H4_STYLES.forEach((s) => dd.addOption(s.id, s.label));
+				dd.setValue(this.plugin.settings.h4Style);
+				dd.onChange(async (v) => {
+					this.plugin.settings.h4Style = v;
+					await this.plugin.saveSettings();
+					this.plugin.refreshPreview();
+				});
+			});
+		// Code block border style
+		new Setting(containerEl)
+			.setName('代码块边框样式')
+			.setDesc('选择代码块的边框装饰风格')
+			.addDropdown((dd) => {
+				CODE_BORDER_STYLES.forEach((s) => dd.addOption(s.id, s.label));
+				dd.setValue(this.plugin.settings.codeBorderStyle);
+				dd.onChange(async (v) => {
+					this.plugin.settings.codeBorderStyle = v;
+					await this.plugin.saveSettings();
+					this.plugin.refreshPreview();
+				});
+			});
 		new Setting(containerEl)
 			.setName('正文字号')
 			.setDesc('文章正文的字体大小')
@@ -1316,18 +1688,69 @@ class WeChatPreviewView extends ItemView {
 			'height:100%;display:flex;flex-direction:column;overflow:hidden;'
 		);
 
-		// Create toolbar (flex-shrink:0 so it never scrolls away)
-		const toolbar = this.containerEl.createEl('div', {
+		// Create toolbar row 1: action buttons
+		const actionRow = this.containerEl.createEl('div', {
 			attr: {
 				style:
-					'flex-shrink:0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px;background:#f5f5f5;border-radius:6px;',
+					'flex-shrink:0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:8px 10px 4px 10px;background:#f5f5f5;border-radius:6px 6px 0 0;',
 			},
 		});
 
-		// Theme/style dropdown
-		toolbar.createEl('span', { text: '主题: ', attr: { style: 'font-size:13px;font-weight:500;' } });
-		const themeSelect = toolbar.createEl('select', {
-			attr: { style: 'padding:4px 8px;border-radius:4px;border:1px solid #ddd;font-size:13px;' },
+		// Send to draft button (leftmost)
+		const sendBtn = actionRow.createEl('button', {
+			text: '📤 发送草稿',
+			attr: {
+				style:
+					'padding:6px 14px;border-radius:4px;border:1px solid #27ae60;background:#27ae60;color:#fff;cursor:pointer;font-size:13px;',
+			},
+		});
+		sendBtn.addEventListener('click', () => this.plugin.sendToDraft());
+
+		// Spacer — push remaining buttons to the right
+		actionRow.createEl('span', { attr: { style: 'flex:1;' } });
+
+		// Copy button
+		const copyBtn = actionRow.createEl('button', {
+			text: '📋 复制',
+			attr: {
+				style:
+					'padding:6px 14px;border-radius:4px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;',
+			},
+		});
+		copyBtn.addEventListener('click', () => this.plugin.formatToClipboard());
+
+		// Export button
+		const exportBtn = actionRow.createEl('button', {
+			text: '💾 导出',
+			attr: {
+				style:
+					'padding:6px 14px;border-radius:4px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;',
+			},
+		});
+		exportBtn.addEventListener('click', () => this.plugin.exportHTML());
+
+		// Refresh button
+		const refreshBtn = actionRow.createEl('button', {
+			text: '🔄 刷新',
+			attr: {
+				style:
+					'padding:6px 14px;border-radius:4px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;',
+			},
+		});
+		refreshBtn.addEventListener('click', () => this.refreshNow());
+
+		// Create toolbar row 2: style controls
+		const styleRow = this.containerEl.createEl('div', {
+			attr: {
+				style:
+					'flex-shrink:0;display:flex;gap:4px;flex-wrap:wrap;align-items:center;padding:4px 10px 8px 10px;background:#f5f5f5;border-radius:0 0 6px 6px;',
+			},
+		});
+
+		// Theme dropdown
+		styleRow.createEl('span', { text: '主题:', attr: { style: 'font-size:13px;font-weight:500;margin-right:2px;' } });
+		const themeSelect = styleRow.createEl('select', {
+			attr: { style: 'padding:3px 6px;border-radius:4px;border:1px solid #ddd;font-size:12px;' },
 		});
 		for (const [key, theme] of Object.entries(THEMES)) {
 			const opt = themeSelect.createEl('option', { value: key, text: theme.label });
@@ -1339,39 +1762,68 @@ class WeChatPreviewView extends ItemView {
 			this.refreshNow();
 		});
 
-		toolbar.createEl('span', { text: ' ', attr: { style: 'flex:1;' } });
-
-		// Copy button
-		const copyBtn = toolbar.createEl('button', {
-			text: '📋 复制',
-			attr: {
-				style:
-					'padding:6px 14px;border-radius:4px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;',
-			},
+		// H2 heading style dropdown
+		styleRow.createEl('span', { text: ' H2:', attr: { style: 'font-size:13px;font-weight:500;margin-right:2px;' } });
+		const h2Select = styleRow.createEl('select', {
+			attr: { style: 'padding:3px 6px;border-radius:4px;border:1px solid #ddd;font-size:12px;' },
 		});
-		copyBtn.addEventListener('click', () => this.plugin.formatToClipboard());
-
-		// Send to draft button
-		const sendBtn = toolbar.createEl('button', {
-			text: '📤 发送草稿',
-			attr: {
-				style:
-					'padding:6px 14px;border-radius:4px;border:1px solid #27ae60;background:#27ae60;color:#fff;cursor:pointer;font-size:13px;',
-			},
+		H2_STYLES.forEach((s) => {
+			const opt = h2Select.createEl('option', { value: s.id, text: s.label });
+			if (s.id === this.plugin.settings.h2Style) opt.selected = true;
 		});
-		sendBtn.addEventListener('click', () => this.plugin.sendToDraft());
-
-		// Refresh button
-		const refreshBtn = toolbar.createEl('button', {
-			text: '🔄 刷新',
-			attr: {
-				style:
-					'padding:6px 14px;border-radius:4px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;',
-			},
+		h2Select.addEventListener('change', () => {
+			this.plugin.settings.h2Style = h2Select.value;
+			this.plugin.saveSettings();
+			this.refreshNow();
 		});
-		refreshBtn.addEventListener('click', () => this.refreshNow());
 
-		// Content area — fills remaining space, scrollable
+		// H3 heading style dropdown
+		styleRow.createEl('span', { text: ' H3:', attr: { style: 'font-size:13px;font-weight:500;margin-right:2px;' } });
+		const h3Select = styleRow.createEl('select', {
+			attr: { style: 'padding:3px 6px;border-radius:4px;border:1px solid #ddd;font-size:12px;' },
+		});
+		H3_STYLES.forEach((s) => {
+			const opt = h3Select.createEl('option', { value: s.id, text: s.label });
+			if (s.id === this.plugin.settings.h3Style) opt.selected = true;
+		});
+		h3Select.addEventListener('change', () => {
+			this.plugin.settings.h3Style = h3Select.value;
+			this.plugin.saveSettings();
+			this.refreshNow();
+		});
+
+		// H4 heading style dropdown
+		styleRow.createEl('span', { text: ' H4:', attr: { style: 'font-size:13px;font-weight:500;margin-right:2px;' } });
+		const h4Select = styleRow.createEl('select', {
+			attr: { style: 'padding:3px 6px;border-radius:4px;border:1px solid #ddd;font-size:12px;' },
+		});
+		H4_STYLES.forEach((s) => {
+			const opt = h4Select.createEl('option', { value: s.id, text: s.label });
+			if (s.id === this.plugin.settings.h4Style) opt.selected = true;
+		});
+		h4Select.addEventListener('change', () => {
+			this.plugin.settings.h4Style = h4Select.value;
+			this.plugin.saveSettings();
+			this.refreshNow();
+		});
+
+		// Code block border style dropdown
+		styleRow.createEl('span', { text: ' 代码块:', attr: { style: 'font-size:13px;font-weight:500;margin-right:2px;' } });
+		const codeBorderSelect = styleRow.createEl('select', {
+			attr: { style: 'padding:3px 6px;border-radius:4px;border:1px solid #ddd;font-size:12px;' },
+		});
+		CODE_BORDER_STYLES.forEach((s) => {
+			const opt = codeBorderSelect.createEl('option', { value: s.id, text: s.label });
+			if (s.id === this.plugin.settings.codeBorderStyle) opt.selected = true;
+		});
+		codeBorderSelect.addEventListener('change', () => {
+			this.plugin.settings.codeBorderStyle = codeBorderSelect.value;
+			this.plugin.saveSettings();
+			this.refreshNow();
+		});
+
+		// Spacer — fill remaining width so right edge aligns with action row
+		styleRow.createEl('span', { attr: { style: 'flex:1;' } });// Content area — fills remaining space, scrollable
 		const contentArea = this.containerEl.createEl('div', {
 			attr: {
 				style:
@@ -1393,22 +1845,40 @@ class WeChatPreviewView extends ItemView {
 		if (el) {
 			el.innerHTML = html;
 			// Attach copy handlers for code block copy buttons
-			el.querySelectorAll<HTMLElement>('.wechat-copy-btn').forEach(btn => {
-				btn.addEventListener('click', () => {
-					const wrapper = btn.parentElement;
-					const pre = wrapper?.querySelector('pre');
-					const code = pre?.textContent || '';
-					navigator.clipboard.writeText(code).then(() => {
-						const origText = btn.textContent || '📋 复制代码';
-						btn.textContent = '✅ 已复制';
-						setTimeout(() => { btn.textContent = origText; }, 2000);
-					}).catch(() => {
-						btn.textContent = '❌ 复制失败';
-						setTimeout(() => { btn.textContent = '📋 复制代码'; }, 2000);
-					});
-				});
-			});
+			this.attachCopyHandlers(el);
 		}
+	}
+
+	/** Attach click-to-copy handlers to all code block copy buttons */
+	private attachCopyHandlers(el: HTMLElement) {
+		el.querySelectorAll('.wechat-copy-btn').forEach((btn) => {
+			const wrapper = btn.closest('div');
+			const pre = wrapper?.querySelector('pre');
+			if (!pre) return;
+			btn.addEventListener('click', async () => {
+				const code = pre.textContent || '';
+				try {
+					await navigator.clipboard.writeText(code);
+					(btn as HTMLElement).textContent = '✅ 已复制';
+					setTimeout(() => {
+						(btn as HTMLElement).textContent = '📋 复制代码';
+					}, 2000);
+				} catch {
+					// Fallback: select and copy
+					const range = document.createRange();
+					range.selectNodeContents(pre);
+					const sel = window.getSelection();
+					if (sel) {
+						sel.removeAllRanges();
+						sel.addRange(range);
+					}
+					(btn as HTMLElement).textContent = '✅ 已复制';
+					setTimeout(() => {
+						(btn as HTMLElement).textContent = '📋 复制代码';
+					}, 2000);
+				}
+			});
+		});
 	}
 
 	scheduleRefresh() {
@@ -1437,34 +1907,7 @@ class WeChatPreviewView extends ItemView {
 			el.innerHTML = html;
 
 			// Attach copy button handlers
-			el.querySelectorAll('.wechat-copy-btn').forEach((btn) => {
-				const wrapper = btn.closest('div');
-				const pre = wrapper?.querySelector('pre');
-				if (!pre) return;
-				btn.addEventListener('click', async () => {
-					const code = pre.textContent || '';
-					try {
-						await navigator.clipboard.writeText(code);
-						(btn as HTMLElement).textContent = '✅ 已复制';
-						setTimeout(() => {
-							(btn as HTMLElement).textContent = '📋 复制代码';
-						}, 2000);
-					} catch {
-						// Fallback: select and copy
-						const range = document.createRange();
-						range.selectNodeContents(pre);
-						const sel = window.getSelection();
-						if (sel) {
-							sel.removeAllRanges();
-							sel.addRange(range);
-						}
-						(btn as HTMLElement).textContent = '✅ 已复制';
-						setTimeout(() => {
-							(btn as HTMLElement).textContent = '📋 复制代码';
-						}, 2000);
-					}
-				});
-			});
+			this.attachCopyHandlers(el);
 		} catch (e) {
 			el.innerHTML = `<p style="color:#e74c3c;">渲染出错: ${e}</p>`;
 		}
@@ -1777,7 +2220,7 @@ ${wechatHtml}
 		}
 
 		// Extract title, author, digest
-		const title = this.extractTitle(markdown);
+		const title = this.extractTitle(markdown, this.app.workspace.getActiveFile()!);
 		const author = this.settings.author || '公众号';
 		const digest = this.extractDigest(markdown);
 
@@ -1809,24 +2252,29 @@ ${wechatHtml}
 	/**
 	 * Extract title from markdown: first H1 heading, or filename if no heading found.
 	 */
-	private extractTitle(markdown: string): string {
-		// Strip YAML frontmatter to avoid matching comments
-		let text = markdown.replace(/^---[\s\S]*?---\n*/, '');
+	private extractTitle(markdown: string, file?: any): string {
+		// Use Obsidian's metadata cache for reliable heading extraction.
+		// This avoids all regex pitfalls with code blocks, inline code, etc.
+		if (file) {
+			try {
+				const cache = this.app.metadataCache.getCache(file);
+				if (cache?.headings?.length) {
+					return cache.headings[0].heading;
+				}
+			} catch (e) {
+				// Fall through to filename fallback
+			}
+		}
 
-		// Strip fenced code blocks (``` and ~~~) to avoid matching # comments in code
-		text = text.replace(/```[\s\S]*?```/g, '');
-		text = text.replace(/~~~[\s\S]*?~~~/g, '');
-
-		// Match first real H1 heading
-		const titleMatch = text.match(/^#\s+(.+)$/m);
-		if (titleMatch) return titleMatch[1].trim();
-
-		// Fallback: use file name (without extension)
+		// Fallback: use file name (without extension) — no regex-based extraction
+		// to avoid matching # comments inside code blocks.
+		if (file) {
+			return file.basename;
+		}
 		const activeFile = this.app.workspace.getActiveFile();
 		if (activeFile) {
 			return activeFile.basename;
 		}
-
 		return '';
 	}
 
@@ -1932,18 +2380,18 @@ ${wechatHtml}
 	// ===== Core Rendering =====
 
 	async renderToWeChat(markdown: string): Promise<string> {
-			// Strip YAML frontmatter (properties) — they are not part of article content
-			markdown = markdown.replace(/^---[\s\S]*?---\n*/, '');
-			const html = await this.markdownToHTML(markdown);
-			// DIAGNOSTIC: log raw HTML structure to console
-			console.log('[WeChatFormat] Raw HTML from markdownToHTML:', {
-				length: html.length,
-				olCount: (html.match(/<ol[ >]/gi) || []).length,
-				liCount: (html.match(/<li[ >]/gi) || []).length,
-				preCount: (html.match(/<pre[ >]/gi) || []).length,
-				olStarts: [...html.matchAll(/<ol\s[^>]*start="(\d+)"/gi)].map(m => m[1]),
-			});
-			let wechatHtml = convertToWeChatHTML(html, this.settings);
+		// Strip YAML frontmatter (properties) — they are not part of article content
+		markdown = markdown.replace(/^---[\s\S]*?---\n*/, '');
+		const html = await this.markdownToHTML(markdown);
+		// DIAGNOSTIC: log raw HTML structure to console
+		console.log('[WeChatFormat] Raw HTML from markdownToHTML:', {
+			length: html.length,
+			olCount: (html.match(/<ol[ >]/gi) || []).length,
+			liCount: (html.match(/<li[ >]/gi) || []).length,
+			preCount: (html.match(/<pre[ >]/gi) || []).length,
+			olStarts: [...html.matchAll(/<ol\s[^>]*start="(\d+)"/gi)].map(m => m[1]),
+		});
+		let wechatHtml = convertToWeChatHTML(html, this.settings);
 
 		// Prepend custom quote if enabled
 		if (this.settings.enableQuote && this.settings.quoteText.trim()) {

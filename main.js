@@ -14,11 +14,23 @@ var DEFAULT_SETTINGS = {
   quoteAuthor: "",
   quoteFontSize: "16px",
   qrCodeFontSize: "16px",
+  // Heading styles
+  h2Style: "border-left",
+  h3Style: "border-bottom",
+  h4Style: "border-bottom",
+  // Code block border style
+  codeBorderStyle: "default",
   appId: "",
   appSecret: "",
   author: "",
   thumbMediaId: ""
 };
+var CODE_BORDER_STYLES = [
+  { id: "default", label: "\u9ED8\u8BA4\uFF08\u7B80\u6D01\u5E95\u7EB9\uFF09" },
+  { id: "apple", label: "\u82F9\u679C\uFF08\u5706\u70B9\u7A97\u53E3\uFF09" },
+  { id: "linux", label: "Linux\uFF08\u7EC8\u7AEF\u98CE\u683C\uFF09" },
+  { id: "windows", label: "Windows\uFF08VS Code \u98CE\u683C\uFF09" }
+];
 var THEMES = {
   classic: {
     name: "classic",
@@ -91,7 +103,7 @@ var THEMES = {
       heading: "#d35400",
       accent: "#f39c12",
       border: "#f0e6d3",
-      codeBg: "#fdf6ec",
+      codeBg: "#f5e6d0",
       codeText: "#5d4037",
       quoteBg: "#fef9ef",
       quoteBorder: "#e67e22",
@@ -131,7 +143,7 @@ var THEMES = {
       heading: "#2e3440",
       accent: "#88c0d0",
       border: "#e5e9f0",
-      codeBg: "#f0f2f5",
+      codeBg: "#d8dee9",
       codeText: "#4c566a",
       quoteBg: "#f0f4f8",
       quoteBorder: "#5e81ac",
@@ -141,6 +153,151 @@ var THEMES = {
     }
   }
 };
+var H2_STYLES = [
+  {
+    id: "border-left",
+    label: "\u5DE6\u8FB9\u6846",
+    css: (c) => [
+      `border-left:4px solid ${c.primary}`,
+      `padding-left:12px`
+    ]
+  },
+  {
+    id: "bottom-line",
+    label: "\u5E95\u90E8\u5206\u9694\u7EBF",
+    css: (c) => [
+      `border-bottom:3px solid ${c.primary}`,
+      `padding-bottom:8px`
+    ]
+  },
+  {
+    id: "bg-block",
+    label: "\u80CC\u666F\u8272\u5757",
+    css: (c) => [
+      `background:${c.primary}40`,
+      `padding:12px 16px`,
+      `border-radius:4px`,
+      `text-align:center`
+    ]
+  },
+  {
+    id: "double-line",
+    label: "\u53CC\u7EBF\u88C5\u9970",
+    css: (c) => [
+      `text-align:center`,
+      `border-top:2px solid ${c.primary}`,
+      `border-bottom:2px solid ${c.primary}`,
+      `padding:10px 0`
+    ]
+  },
+  {
+    id: "left-border-grad",
+    label: "\u5DE6\u8FB9\u6846\u6E10\u53D8",
+    css: (c) => [
+      `border-left:4px solid ${c.primary}`,
+      `padding:6px 0 6px 14px`,
+      `background:linear-gradient(to right, ${c.primary}50, ${c.primary}08)`,
+      `border-radius:0 4px 4px 0`
+    ]
+  },
+  {
+    id: "icon-number",
+    label: "\u5E8F\u53F7\u56FE\u6807",
+    css: (c) => [
+      `display:flex`,
+      `align-items:center`,
+      `gap:12px`
+    ],
+    prependHtml: (c) => `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:${c.primary};color:#fff;font-size:14px;font-weight:700;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 12 13 20 7"></polyline><polyline points="4 13 12 19 20 13"></polyline></svg></span>`
+  }
+];
+var H3_STYLES = [
+  {
+    id: "border-bottom",
+    label: "\u5E95\u90E8\u5206\u9694\u7EBF",
+    css: (c) => [
+      `border-bottom:2px solid ${c.border}`,
+      `padding-bottom:6px`
+    ]
+  },
+  {
+    id: "border-left",
+    label: "\u5DE6\u8FB9\u6846\uFF08\u7EC6\uFF09",
+    css: (c) => [
+      `border-left:3px solid ${c.primary}`,
+      `padding-left:10px`
+    ]
+  },
+  {
+    id: "label",
+    label: "\u5706\u89D2\u6807\u7B7E",
+    css: (c) => [
+      `background:${c.primary}`,
+      `color:#ffffff`,
+      `padding:4px 14px`,
+      `border-radius:4px`,
+      `display:inline-block`
+    ]
+  },
+  {
+    id: "underline",
+    label: "\u4E0B\u5212\u7EBF\u88C5\u9970",
+    css: (c) => [
+      `display:inline-block`,
+      `border-bottom:2px solid ${c.primary}`,
+      `padding-bottom:2px`
+    ]
+  }
+];
+var H4_STYLES = [
+  {
+    id: "border-bottom",
+    label: "\u5E95\u90E8\u5206\u9694\u7EBF",
+    css: (c) => [
+      `border-bottom:1px solid ${c.border}`,
+      `padding-bottom:4px`
+    ]
+  },
+  {
+    id: "bold",
+    label: "\u7EAF\u8272\u52A0\u7C97",
+    css: (c) => [
+      `color:${c.primary}`
+    ]
+  },
+  {
+    id: "dot",
+    label: "\u5DE6\u4FA7\u65B9\u70B9",
+    css: (c) => [
+      `display:flex`,
+      `align-items:center`,
+      `gap:8px`
+    ],
+    prependHtml: (c) => `<span style="display:inline-flex;align-items:center;flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="8" height="8" rx="0" ry="0" fill="${c.primary}"/></svg></span>`
+  },
+  {
+    id: "label",
+    label: "\u5706\u89D2\u6807\u7B7E",
+    css: (c) => [
+      `background:${c.primary}40`,
+      `color:${c.primary}`,
+      `padding:2px 10px`,
+      `border-radius:4px`,
+      `display:inline-block`
+    ]
+  }
+];
+var HEADING_STYLE_MAP = {
+  h2: H2_STYLES,
+  h3: H3_STYLES,
+  h4: H4_STYLES
+};
+function getHeadingStyleDef(tag, settings) {
+  const styles = HEADING_STYLE_MAP[tag];
+  if (!styles) return null;
+  const key = tag === "h2" ? settings.h2Style : tag === "h3" ? settings.h3Style : settings.h4Style;
+  return styles.find((s) => s.id === key) || null;
+}
 function convertToWeChatHTML(html, settings) {
   const theme = THEMES[settings.theme] || THEMES.classic;
   const c = theme.colors;
@@ -191,14 +348,33 @@ function applyStyles(el, c, settings, doc) {
   const tag = el.tagName.toLowerCase();
   switch (tag) {
     case "h1":
-    case "h2":
-      setStyle(el, headingStyle(c, tag, true));
+      setStyle(el, headingStyle(c, tag));
       break;
+    case "h2":
     case "h3":
-    case "h4":
+    case "h4": {
+      const styleDef = getHeadingStyleDef(tag, settings);
+      const extraCss = styleDef ? styleDef.css(c) : void 0;
+      if (tag === "h4" && styleDef?.id === "label") {
+        setStyle(el, headingStyle(c, tag));
+        const span = doc.createElement("span");
+        span.textContent = el.textContent;
+        setStyle(span, extraCss || []);
+        el.textContent = "";
+        el.appendChild(span);
+      } else {
+        setStyle(el, headingStyle(c, tag, extraCss));
+        if (styleDef?.prependHtml) {
+          const span = doc.createElement("span");
+          span.innerHTML = styleDef.prependHtml(c);
+          el.insertBefore(span, el.firstChild);
+        }
+      }
+      break;
+    }
     case "h5":
     case "h6":
-      setStyle(el, headingStyle(c, tag, false));
+      setStyle(el, headingStyle(c, tag));
       break;
     case "p":
       setStyle(el, paragraphStyle(c, settings));
@@ -224,14 +400,108 @@ function applyStyles(el, c, settings, doc) {
         if (langMatch) lang = langMatch[1];
       }
       const wrapper = doc.createElement("div");
-      setStyle(wrapper, [
+      const borderStyle = settings.codeBorderStyle || "default";
+      const wrapperStyles = [
         `background: ${c.codeBg}`,
         `color: ${c.codeText}`,
         `border-radius: 4px`,
         `overflow: hidden`,
         `margin: 1.5em 0`
-      ]);
-      if (lang) {
+      ];
+      if (borderStyle === "apple" || borderStyle === "linux" || borderStyle === "windows") {
+        wrapperStyles.push(`border: 1px solid ${c.border}`);
+      }
+      if (borderStyle === "apple") {
+        wrapperStyles.push(`box-shadow: 0 2px 8px rgba(0,0,0,0.08)`);
+      }
+      setStyle(wrapper, wrapperStyles);
+      if (borderStyle === "apple") {
+        const dotRow = doc.createElement("p");
+        setStyle(dotRow, [
+          `padding: 8px 12px 0 12px`,
+          `margin: 0`,
+          `background: ${c.codeBg}`,
+          `margin-bottom: 0`
+        ]);
+        for (const dotColor of ["#ff5f57", "#febc2e", "#28c840"]) {
+          const dot = doc.createElement("span");
+          dot.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="${dotColor}"/></svg>`;
+          setStyle(dot, [
+            `display: inline-flex`,
+            `vertical-align: middle`,
+            `margin-right: 6px`
+          ]);
+          dotRow.appendChild(dot);
+        }
+        if (lang) {
+          const langSpan = doc.createElement("span");
+          langSpan.textContent = lang;
+          setStyle(langSpan, [
+            `float: right`,
+            `font-family:'Courier New','Consolas',monospace`,
+            `font-size:0.75em`,
+            `color: ${c.codeText}`
+          ]);
+          dotRow.appendChild(langSpan);
+        }
+        wrapper.appendChild(dotRow);
+      } else if (borderStyle === "linux") {
+        const titleBar = doc.createElement("p");
+        setStyle(titleBar, [
+          `padding: 6px 12px`,
+          `margin: 0`,
+          `background: ${c.primary}60`,
+          `color: #ffffff`,
+          `font-size: 0.75em`,
+          `font-family:'Courier New','Consolas',monospace`
+        ]);
+        for (const btnColor of ["#ff5f57", "#febc2e", "#28c840"]) {
+          const btn = doc.createElement("span");
+          btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="10" height="10" rx="2" ry="2" fill="${btnColor}"/></svg>`;
+          setStyle(btn, [
+            `display: inline-flex`,
+            `vertical-align: middle`,
+            `margin-right: 6px`
+          ]);
+          titleBar.appendChild(btn);
+        }
+        if (lang) {
+          const langSpan = doc.createElement("span");
+          langSpan.textContent = lang;
+          setStyle(langSpan, [
+            `float: right`,
+            `opacity: 0.8`
+          ]);
+          titleBar.appendChild(langSpan);
+        }
+        wrapper.appendChild(titleBar);
+      } else if (borderStyle === "windows") {
+        const accentBar = doc.createElement("p");
+        accentBar.textContent = "\xA0";
+        setStyle(accentBar, [
+          `background: ${c.primary}`,
+          `padding: 2px 0`,
+          `margin: 0`,
+          `font-size: 1px`,
+          `line-height: 1`,
+          `color: transparent`
+        ]);
+        wrapper.appendChild(accentBar);
+        if (lang) {
+          const langRow = doc.createElement("p");
+          langRow.textContent = lang;
+          setStyle(langRow, [
+            `padding: 4px 12px 0 12px`,
+            `margin: 0`,
+            `text-align: right`,
+            `color: ${c.codeText}`,
+            `font-family:'Courier New','Consolas',monospace`,
+            `font-size:0.75em`,
+            `line-height: 1.5`
+          ]);
+          wrapper.appendChild(langRow);
+        }
+      } else if (lang) {
         const langP = doc.createElement("p");
         langP.textContent = lang;
         setStyle(langP, [
@@ -430,7 +700,7 @@ function setStyle(el, styles) {
   const addon = styles.join(";");
   el.setAttribute("style", existing ? existing + ";" + addon : addon);
 }
-function headingStyle(c, tag, isMajor) {
+function headingStyle(c, tag, extraCss) {
   const sizes = {
     h1: "1.6em",
     h2: "1.35em",
@@ -447,12 +717,16 @@ function headingStyle(c, tag, isMajor) {
     `color:${c.heading}`,
     `line-height:1.4`
   ];
-  if (isMajor) {
-    styles.push(`border-left:4px solid ${c.primary}`);
-    styles.push(`padding-left:12px`);
+  if (extraCss) {
+    styles.push(...extraCss);
   } else {
-    styles.push(`border-bottom:2px solid ${c.border}`);
-    styles.push(`padding-bottom:6px`);
+    if (tag === "h1" || tag === "h2") {
+      styles.push(`border-left:4px solid ${c.primary}`);
+      styles.push(`padding-left:12px`);
+    } else {
+      styles.push(`border-bottom:2px solid ${c.border}`);
+      styles.push(`padding-bottom:6px`);
+    }
   }
   return styles;
 }
@@ -569,14 +843,14 @@ Content-Type: image/png\r
     return result;
   }
   /**
-  * Comprehensive content sanitization for WeChat draft API.
-  *   - Emoji/special Unicode
-  *   - app:// / file:// URLs remaining after failed image uploads
-  *   - Forbidden HTML tags (script, iframe, object, embed, applet, frame, frameset)
-  *   - Control characters (except \n)
-  *   - Content exceeding 20,000 character limit
-  *   - Empty content after stripping
-  */
+   * Comprehensive content sanitization for WeChat draft API.
+   *   - Emoji/special Unicode
+   *   - app:// / file:// URLs remaining after failed image uploads
+   *   - Forbidden HTML tags (script, iframe, object, embed, applet, frame, frameset)
+   *   - Control characters (except \n)
+   *   - Content exceeding 20,000 character limit
+   *   - Empty content after stripping
+   */
   sanitizeForWeChat(str) {
     let result = this.stripEmoji(str);
     result = result.replace(/<img[^>]*src\s*=\s*["']app:\/\/[^"']*["'][^>]*>/gi, '<span style="color:#999;font-size:0.9em;">[\u56FE\u7247\u4E0A\u4F20\u5931\u8D25]</span>');
@@ -722,6 +996,42 @@ var WeChatFormatSettingTab = class extends PluginSettingTab {
         attr: { style: "margin:-10px 0 20px 14px;color:#888;font-size:13px;" }
       });
     }
+    new Setting(containerEl).setName("H2 \u6807\u9898\u6837\u5F0F").setDesc("\u4E8C\u7EA7\u6807\u9898\u7684\u88C5\u9970\u98CE\u683C").addDropdown((dd) => {
+      H2_STYLES.forEach((s) => dd.addOption(s.id, s.label));
+      dd.setValue(this.plugin.settings.h2Style);
+      dd.onChange(async (v) => {
+        this.plugin.settings.h2Style = v;
+        await this.plugin.saveSettings();
+        this.plugin.refreshPreview();
+      });
+    });
+    new Setting(containerEl).setName("H3 \u6807\u9898\u6837\u5F0F").setDesc("\u4E09\u7EA7\u6807\u9898\u7684\u88C5\u9970\u98CE\u683C").addDropdown((dd) => {
+      H3_STYLES.forEach((s) => dd.addOption(s.id, s.label));
+      dd.setValue(this.plugin.settings.h3Style);
+      dd.onChange(async (v) => {
+        this.plugin.settings.h3Style = v;
+        await this.plugin.saveSettings();
+        this.plugin.refreshPreview();
+      });
+    });
+    new Setting(containerEl).setName("H4 \u6807\u9898\u6837\u5F0F").setDesc("\u56DB\u7EA7\u6807\u9898\u7684\u88C5\u9970\u98CE\u683C").addDropdown((dd) => {
+      H4_STYLES.forEach((s) => dd.addOption(s.id, s.label));
+      dd.setValue(this.plugin.settings.h4Style);
+      dd.onChange(async (v) => {
+        this.plugin.settings.h4Style = v;
+        await this.plugin.saveSettings();
+        this.plugin.refreshPreview();
+      });
+    });
+    new Setting(containerEl).setName("\u4EE3\u7801\u5757\u8FB9\u6846\u6837\u5F0F").setDesc("\u9009\u62E9\u4EE3\u7801\u5757\u7684\u8FB9\u6846\u88C5\u9970\u98CE\u683C").addDropdown((dd) => {
+      CODE_BORDER_STYLES.forEach((s) => dd.addOption(s.id, s.label));
+      dd.setValue(this.plugin.settings.codeBorderStyle);
+      dd.onChange(async (v) => {
+        this.plugin.settings.codeBorderStyle = v;
+        await this.plugin.saveSettings();
+        this.plugin.refreshPreview();
+      });
+    });
     new Setting(containerEl).setName("\u6B63\u6587\u5B57\u53F7").setDesc("\u6587\u7AE0\u6B63\u6587\u7684\u5B57\u4F53\u5927\u5C0F").addDropdown((dd) => {
       ["14px", "15px", "16px", "17px", "18px"].forEach((s) => dd.addOption(s, s));
       dd.setValue(this.plugin.settings.fontSize);
@@ -1064,14 +1374,48 @@ var WeChatPreviewView = class extends ItemView {
       "style",
       "height:100%;display:flex;flex-direction:column;overflow:hidden;"
     );
-    const toolbar = this.containerEl.createEl("div", {
+    const actionRow = this.containerEl.createEl("div", {
       attr: {
-        style: "flex-shrink:0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px;background:#f5f5f5;border-radius:6px;"
+        style: "flex-shrink:0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:8px 10px 4px 10px;background:#f5f5f5;border-radius:6px 6px 0 0;"
       }
     });
-    toolbar.createEl("span", { text: "\u4E3B\u9898: ", attr: { style: "font-size:13px;font-weight:500;" } });
-    const themeSelect = toolbar.createEl("select", {
-      attr: { style: "padding:4px 8px;border-radius:4px;border:1px solid #ddd;font-size:13px;" }
+    const sendBtn = actionRow.createEl("button", {
+      text: "\u{1F4E4} \u53D1\u9001\u8349\u7A3F",
+      attr: {
+        style: "padding:6px 14px;border-radius:4px;border:1px solid #27ae60;background:#27ae60;color:#fff;cursor:pointer;font-size:13px;"
+      }
+    });
+    sendBtn.addEventListener("click", () => this.plugin.sendToDraft());
+    actionRow.createEl("span", { attr: { style: "flex:1;" } });
+    const copyBtn = actionRow.createEl("button", {
+      text: "\u{1F4CB} \u590D\u5236",
+      attr: {
+        style: "padding:6px 14px;border-radius:4px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;"
+      }
+    });
+    copyBtn.addEventListener("click", () => this.plugin.formatToClipboard());
+    const exportBtn = actionRow.createEl("button", {
+      text: "\u{1F4BE} \u5BFC\u51FA",
+      attr: {
+        style: "padding:6px 14px;border-radius:4px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;"
+      }
+    });
+    exportBtn.addEventListener("click", () => this.plugin.exportHTML());
+    const refreshBtn = actionRow.createEl("button", {
+      text: "\u{1F504} \u5237\u65B0",
+      attr: {
+        style: "padding:6px 14px;border-radius:4px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;"
+      }
+    });
+    refreshBtn.addEventListener("click", () => this.refreshNow());
+    const styleRow = this.containerEl.createEl("div", {
+      attr: {
+        style: "flex-shrink:0;display:flex;gap:4px;flex-wrap:wrap;align-items:center;padding:4px 10px 8px 10px;background:#f5f5f5;border-radius:0 0 6px 6px;"
+      }
+    });
+    styleRow.createEl("span", { text: "\u4E3B\u9898:", attr: { style: "font-size:13px;font-weight:500;margin-right:2px;" } });
+    const themeSelect = styleRow.createEl("select", {
+      attr: { style: "padding:3px 6px;border-radius:4px;border:1px solid #ddd;font-size:12px;" }
     });
     for (const [key, theme] of Object.entries(THEMES)) {
       const opt = themeSelect.createEl("option", { value: key, text: theme.label });
@@ -1082,28 +1426,59 @@ var WeChatPreviewView = class extends ItemView {
       this.plugin.saveSettings();
       this.refreshNow();
     });
-    toolbar.createEl("span", { text: " ", attr: { style: "flex:1;" } });
-    const copyBtn = toolbar.createEl("button", {
-      text: "\u{1F4CB} \u590D\u5236",
-      attr: {
-        style: "padding:6px 14px;border-radius:4px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;"
-      }
+    styleRow.createEl("span", { text: " H2:", attr: { style: "font-size:13px;font-weight:500;margin-right:2px;" } });
+    const h2Select = styleRow.createEl("select", {
+      attr: { style: "padding:3px 6px;border-radius:4px;border:1px solid #ddd;font-size:12px;" }
     });
-    copyBtn.addEventListener("click", () => this.plugin.formatToClipboard());
-    const sendBtn = toolbar.createEl("button", {
-      text: "\u{1F4E4} \u53D1\u9001\u8349\u7A3F",
-      attr: {
-        style: "padding:6px 14px;border-radius:4px;border:1px solid #27ae60;background:#27ae60;color:#fff;cursor:pointer;font-size:13px;"
-      }
+    H2_STYLES.forEach((s) => {
+      const opt = h2Select.createEl("option", { value: s.id, text: s.label });
+      if (s.id === this.plugin.settings.h2Style) opt.selected = true;
     });
-    sendBtn.addEventListener("click", () => this.plugin.sendToDraft());
-    const refreshBtn = toolbar.createEl("button", {
-      text: "\u{1F504} \u5237\u65B0",
-      attr: {
-        style: "padding:6px 14px;border-radius:4px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;"
-      }
+    h2Select.addEventListener("change", () => {
+      this.plugin.settings.h2Style = h2Select.value;
+      this.plugin.saveSettings();
+      this.refreshNow();
     });
-    refreshBtn.addEventListener("click", () => this.refreshNow());
+    styleRow.createEl("span", { text: " H3:", attr: { style: "font-size:13px;font-weight:500;margin-right:2px;" } });
+    const h3Select = styleRow.createEl("select", {
+      attr: { style: "padding:3px 6px;border-radius:4px;border:1px solid #ddd;font-size:12px;" }
+    });
+    H3_STYLES.forEach((s) => {
+      const opt = h3Select.createEl("option", { value: s.id, text: s.label });
+      if (s.id === this.plugin.settings.h3Style) opt.selected = true;
+    });
+    h3Select.addEventListener("change", () => {
+      this.plugin.settings.h3Style = h3Select.value;
+      this.plugin.saveSettings();
+      this.refreshNow();
+    });
+    styleRow.createEl("span", { text: " H4:", attr: { style: "font-size:13px;font-weight:500;margin-right:2px;" } });
+    const h4Select = styleRow.createEl("select", {
+      attr: { style: "padding:3px 6px;border-radius:4px;border:1px solid #ddd;font-size:12px;" }
+    });
+    H4_STYLES.forEach((s) => {
+      const opt = h4Select.createEl("option", { value: s.id, text: s.label });
+      if (s.id === this.plugin.settings.h4Style) opt.selected = true;
+    });
+    h4Select.addEventListener("change", () => {
+      this.plugin.settings.h4Style = h4Select.value;
+      this.plugin.saveSettings();
+      this.refreshNow();
+    });
+    styleRow.createEl("span", { text: " \u4EE3\u7801\u5757:", attr: { style: "font-size:13px;font-weight:500;margin-right:2px;" } });
+    const codeBorderSelect = styleRow.createEl("select", {
+      attr: { style: "padding:3px 6px;border-radius:4px;border:1px solid #ddd;font-size:12px;" }
+    });
+    CODE_BORDER_STYLES.forEach((s) => {
+      const opt = codeBorderSelect.createEl("option", { value: s.id, text: s.label });
+      if (s.id === this.plugin.settings.codeBorderStyle) opt.selected = true;
+    });
+    codeBorderSelect.addEventListener("change", () => {
+      this.plugin.settings.codeBorderStyle = codeBorderSelect.value;
+      this.plugin.saveSettings();
+      this.refreshNow();
+    });
+    styleRow.createEl("span", { attr: { style: "flex:1;" } });
     const contentArea = this.containerEl.createEl("div", {
       attr: {
         style: "flex:1;overflow-y:auto;padding:20px;max-width:700px;margin:0 auto;font-size:16px;line-height:1.75;"
@@ -1117,26 +1492,38 @@ var WeChatPreviewView = class extends ItemView {
     const el = this._renderEl;
     if (el) {
       el.innerHTML = html;
-      el.querySelectorAll(".wechat-copy-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const wrapper = btn.parentElement;
-          const pre = wrapper?.querySelector("pre");
-          const code = pre?.textContent || "";
-          navigator.clipboard.writeText(code).then(() => {
-            const origText = btn.textContent || "\u{1F4CB} \u590D\u5236\u4EE3\u7801";
-            btn.textContent = "\u2705 \u5DF2\u590D\u5236";
-            setTimeout(() => {
-              btn.textContent = origText;
-            }, 2e3);
-          }).catch(() => {
-            btn.textContent = "\u274C \u590D\u5236\u5931\u8D25";
-            setTimeout(() => {
-              btn.textContent = "\u{1F4CB} \u590D\u5236\u4EE3\u7801";
-            }, 2e3);
-          });
-        });
-      });
+      this.attachCopyHandlers(el);
     }
+  }
+  /** Attach click-to-copy handlers to all code block copy buttons */
+  attachCopyHandlers(el) {
+    el.querySelectorAll(".wechat-copy-btn").forEach((btn) => {
+      const wrapper = btn.closest("div");
+      const pre = wrapper?.querySelector("pre");
+      if (!pre) return;
+      btn.addEventListener("click", async () => {
+        const code = pre.textContent || "";
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = "\u2705 \u5DF2\u590D\u5236";
+          setTimeout(() => {
+            btn.textContent = "\u{1F4CB} \u590D\u5236\u4EE3\u7801";
+          }, 2e3);
+        } catch {
+          const range = document.createRange();
+          range.selectNodeContents(pre);
+          const sel = window.getSelection();
+          if (sel) {
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+          btn.textContent = "\u2705 \u5DF2\u590D\u5236";
+          setTimeout(() => {
+            btn.textContent = "\u{1F4CB} \u590D\u5236\u4EE3\u7801";
+          }, 2e3);
+        }
+      });
+    });
   }
   scheduleRefresh() {
     if (this.debounceTimer) {
@@ -1160,33 +1547,7 @@ var WeChatPreviewView = class extends ItemView {
     try {
       const html = await this.plugin.renderToWeChat(markdown);
       el.innerHTML = html;
-      el.querySelectorAll(".wechat-copy-btn").forEach((btn) => {
-        const wrapper = btn.closest("div");
-        const pre = wrapper?.querySelector("pre");
-        if (!pre) return;
-        btn.addEventListener("click", async () => {
-          const code = pre.textContent || "";
-          try {
-            await navigator.clipboard.writeText(code);
-            btn.textContent = "\u2705 \u5DF2\u590D\u5236";
-            setTimeout(() => {
-              btn.textContent = "\u{1F4CB} \u590D\u5236\u4EE3\u7801";
-            }, 2e3);
-          } catch {
-            const range = document.createRange();
-            range.selectNodeContents(pre);
-            const sel = window.getSelection();
-            if (sel) {
-              sel.removeAllRanges();
-              sel.addRange(range);
-            }
-            btn.textContent = "\u2705 \u5DF2\u590D\u5236";
-            setTimeout(() => {
-              btn.textContent = "\u{1F4CB} \u590D\u5236\u4EE3\u7801";
-            }, 2e3);
-          }
-        });
-      });
+      this.attachCopyHandlers(el);
     } catch (e) {
       el.innerHTML = `<p style="color:#e74c3c;">\u6E32\u67D3\u51FA\u9519: ${e}</p>`;
     }
@@ -1446,7 +1807,7 @@ ${wechatHtml}
         return;
       }
     }
-    const title = this.extractTitle(markdown);
+    const title = this.extractTitle(markdown, this.app.workspace.getActiveFile());
     const author = this.settings.author || "\u516C\u4F17\u53F7";
     const digest = this.extractDigest(markdown);
     if (!title) {
@@ -1469,12 +1830,19 @@ ${(e.stack || "").split("\n").slice(0, 3).join("\n")}` : String(e);
   /**
    * Extract title from markdown: first H1 heading, or filename if no heading found.
    */
-  extractTitle(markdown) {
-    let text = markdown.replace(/^---[\s\S]*?---\n*/, "");
-    text = text.replace(/```[\s\S]*?```/g, "");
-    text = text.replace(/~~~[\s\S]*?~~~/g, "");
-    const titleMatch = text.match(/^#\s+(.+)$/m);
-    if (titleMatch) return titleMatch[1].trim();
+  extractTitle(markdown, file) {
+    if (file) {
+      try {
+        const cache = this.app.metadataCache.getCache(file);
+        if (cache?.headings?.length) {
+          return cache.headings[0].heading;
+        }
+      } catch (e) {
+      }
+    }
+    if (file) {
+      return file.basename;
+    }
     const activeFile = this.app.workspace.getActiveFile();
     if (activeFile) {
       return activeFile.basename;
