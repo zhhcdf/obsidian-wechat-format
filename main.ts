@@ -496,7 +496,7 @@ function applyStyles(el: HTMLElement, c: Theme['colors'], settings: WeChatFormat
 				setStyle(dotRow, [
 					`padding: 8px 12px 0 12px`,
 					`margin: 0`,
-					`background: ${c.codeBg}`,
+					`background-color: ${c.codeBg}`,
 					`margin-bottom: 0`,
 				]);
 				for (const dotColor of ['#ff5f57', '#febc2e', '#28c840']) {
@@ -528,7 +528,7 @@ function applyStyles(el: HTMLElement, c: Theme['colors'], settings: WeChatFormat
 				setStyle(titleBar, [
 					`padding: 6px 12px`,
 					`margin: 0`,
-					`background: ${c.primary}60`,
+					`background-color: ${c.primary}`,
 					`color: #ffffff`,
 					`font-size: 0.75em`,
 					`font-family:'Courier New','Consolas',monospace`,
@@ -558,9 +558,9 @@ function applyStyles(el: HTMLElement, c: Theme['colors'], settings: WeChatFormat
 				// Windows VS Code style: accent bar (colored p) + language label on the right
 				// Accent bar: p with background color + padding (WeChat-safe — background on p is preserved)
 				const accentBar = doc.createElement('p');
-				accentBar.textContent = ' ';  // non-breaking space
+				accentBar.textContent = '\u00A0';  // non-breaking space
 				setStyle(accentBar, [
-					`background: ${c.primary}`,
+					`background-color: ${c.primary}`,
 					`padding: 2px 0`,
 					`margin: 0`,
 					`font-size: 1px`,
@@ -574,6 +574,7 @@ function applyStyles(el: HTMLElement, c: Theme['colors'], settings: WeChatFormat
 					setStyle(langRow, [
 						`padding: 4px 12px 0 12px`,
 						`margin: 0`,
+						`background-color: ${c.codeBg}`,
 						`text-align: right`,
 						`color: ${c.codeText}`,
 						`font-family:'Courier New','Consolas',monospace`,
@@ -587,14 +588,13 @@ function applyStyles(el: HTMLElement, c: Theme['colors'], settings: WeChatFormat
 				const langP = doc.createElement('p');
 				langP.textContent = lang;
 				setStyle(langP, [
-					`background: ${c.codeBg}`,
+					`background-color: ${c.codeBg}`,
 					`color: ${c.codeText}`,
 					`margin: 0`,
 					`padding: 12px 16px 4px 16px`,
 					`font-family:'Courier New','Consolas',monospace`,
 					`font-size:0.75em`,
 					`line-height: 1.5`,
-					`opacity: 0.7`,
 					`border-radius: 4px 4px 0 0`,
 					`text-align: right`,
 				]);
