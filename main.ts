@@ -332,7 +332,7 @@ function getHeadingStyleDef(tag: string, settings: WeChatFormatSettings): Headin
  * Convert Obsidian-rendered HTML to WeChat-compatible HTML with inline styles.
  * Uses DOM tree traversal instead of regex to handle nested structures correctly.
  */
-function convertToWeChatHTML(html: string, settings: WeChatFormatSettings): string {
+function convertToWeChatHTML(html: string, settings: WeChatFormatSettings, previewMode = false): string {
 	const theme = THEMES[settings.theme] || THEMES.classic;
 	const c = theme.colors;
 
@@ -359,8 +359,11 @@ function convertToWeChatHTML(html: string, settings: WeChatFormatSettings): stri
 	applyStyles(root, c, settings, doc);
 
 	// Build outer container
+	// previewMode: max-width is controlled by styles.css (.wechat-preview-content
+	// section) so the mobile media query needs no !important. Export/clipboard
+	// keep the inline max-width because the WeChat editor ignores external CSS.
 	const containerStyle = [
-		`max-width:677px`,
+		...(previewMode ? [] : [`max-width:677px`]),
 		`margin:0 auto`,
 		`padding:10px 15px`,
 		`background:${c.background}`,
@@ -381,7 +384,8 @@ function convertToWeChatHTML(html: string, settings: WeChatFormatSettings): stri
 
 	// Append QR code if enabled
 	if (settings.addQrCode) {
-		result += `\n<section style="max-width:677px;margin:20px auto 0;padding:20px 15px;text-align:center;background:${c.background};border-top:1px solid ${c.border};font-family:-apple-system,'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;font-size:14px;color:#999;">
+		const qrInlineWidth = previewMode ? '' : 'max-width:677px;';
+		result += `\n<section style="${qrInlineWidth}margin:20px auto 0;padding:20px 15px;text-align:center;background:${c.background};border-top:1px solid ${c.border};font-family:-apple-system,'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;font-size:14px;color:#999;">
 			<p style="margin:0;font-weight:700;font-size:${settings.qrCodeFontSize};">${settings.qrCodeText || '扫码关注'}</p>\n			<p style="margin:0;font-size:14px;">&nbsp;</p>\n		</section>`;
 	}
 
@@ -1903,7 +1907,7 @@ class WeChatPreviewView extends ItemView {
 			return;
 		}
 		try {
-			const html = await this.plugin.renderToWeChat(markdown);
+			const html = await this.plugin.renderToWeChat(markdown, true);
 			el.innerHTML = html;
 
 			// Attach copy button handlers
@@ -2133,7 +2137,7 @@ class WeChatFormatPlugin extends Plugin {
 			return;
 		}
 
-		const html = await this.renderToWeChat(markdown);
+		const html = await this.renderToWeChat(markdown, true);
 		this.previewView.setContent(html);
 	}
 
@@ -2379,7 +2383,7 @@ ${wechatHtml}
 
 	// ===== Core Rendering =====
 
-	async renderToWeChat(markdown: string): Promise<string> {
+	async renderToWeChat(markdown: string, previewMode = false): Promise<string> {
 		// Strip YAML frontmatter (properties) — they are not part of article content
 		markdown = markdown.replace(/^---[\s\S]*?---\n*/, '');
 		const html = await this.markdownToHTML(markdown);
@@ -2391,7 +2395,7 @@ ${wechatHtml}
 			preCount: (html.match(/<pre[ >]/gi) || []).length,
 			olStarts: [...html.matchAll(/<ol\s[^>]*start="(\d+)"/gi)].map(m => m[1]),
 		});
-		let wechatHtml = convertToWeChatHTML(html, this.settings);
+		let wechatHtml = convertToWeChatHTML(html, this.settings, previewMode);
 
 		// Prepend custom quote if enabled
 		if (this.settings.enableQuote && this.settings.quoteText.trim()) {

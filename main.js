@@ -298,7 +298,7 @@ function getHeadingStyleDef(tag, settings) {
   const key = tag === "h2" ? settings.h2Style : tag === "h3" ? settings.h3Style : settings.h4Style;
   return styles.find((s) => s.id === key) || null;
 }
-function convertToWeChatHTML(html, settings) {
+function convertToWeChatHTML(html, settings, previewMode = false) {
   const theme = THEMES[settings.theme] || THEMES.classic;
   const c = theme.colors;
   const parser = new DOMParser();
@@ -318,7 +318,7 @@ function convertToWeChatHTML(html, settings) {
   }
   applyStyles(root, c, settings, doc);
   const containerStyle = [
-    `max-width:677px`,
+    ...previewMode ? [] : [`max-width:677px`],
     `margin:0 auto`,
     `padding:10px 15px`,
     `background:${c.background}`,
@@ -333,8 +333,9 @@ function convertToWeChatHTML(html, settings) {
 ${result}
 </section>`;
   if (settings.addQrCode) {
+    const qrInlineWidth = previewMode ? "" : "max-width:677px;";
     result += `
-<section style="max-width:677px;margin:20px auto 0;padding:20px 15px;text-align:center;background:${c.background};border-top:1px solid ${c.border};font-family:-apple-system,'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;font-size:14px;color:#999;">
+<section style="${qrInlineWidth}margin:20px auto 0;padding:20px 15px;text-align:center;background:${c.background};border-top:1px solid ${c.border};font-family:-apple-system,'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;font-size:14px;color:#999;">
 			<p style="margin:0;font-weight:700;font-size:${settings.qrCodeFontSize};">${settings.qrCodeText || "\u626B\u7801\u5173\u6CE8"}</p>
 			<p style="margin:0;font-size:14px;">&nbsp;</p>
 		</section>`;
@@ -1545,7 +1546,7 @@ var WeChatPreviewView = class extends ItemView {
       return;
     }
     try {
-      const html = await this.plugin.renderToWeChat(markdown);
+      const html = await this.plugin.renderToWeChat(markdown, true);
       el.innerHTML = html;
       this.attachCopyHandlers(el);
     } catch (e) {
@@ -1734,7 +1735,7 @@ var WeChatFormatPlugin = class extends Plugin {
       inner.innerHTML = '<p style="color:#999;text-align:center;padding:40px;">\u5F53\u524D\u7B14\u8BB0\u4E3A\u7A7A</p>';
       return;
     }
-    const html = await this.renderToWeChat(markdown);
+    const html = await this.renderToWeChat(markdown, true);
     this.previewView.setContent(html);
   }
   async exportHTML() {
@@ -1935,7 +1936,7 @@ ${(e.stack || "").split("\n").slice(0, 3).join("\n")}` : String(e);
     }
   }
   // ===== Core Rendering =====
-  async renderToWeChat(markdown) {
+  async renderToWeChat(markdown, previewMode = false) {
     markdown = markdown.replace(/^---[\s\S]*?---\n*/, "");
     const html = await this.markdownToHTML(markdown);
     console.log("[WeChatFormat] Raw HTML from markdownToHTML:", {
@@ -1945,7 +1946,7 @@ ${(e.stack || "").split("\n").slice(0, 3).join("\n")}` : String(e);
       preCount: (html.match(/<pre[ >]/gi) || []).length,
       olStarts: [...html.matchAll(/<ol\s[^>]*start="(\d+)"/gi)].map((m) => m[1])
     });
-    let wechatHtml = convertToWeChatHTML(html, this.settings);
+    let wechatHtml = convertToWeChatHTML(html, this.settings, previewMode);
     if (this.settings.enableQuote && this.settings.quoteText.trim()) {
       const c = THEMES[this.settings.theme]?.colors;
       const quoteHtml = `<section style="margin:0.5em 0 1em 0;padding:14px 18px;background:${c?.quoteBg || "#f9f9f9"};border-radius:4px;border-left:4px solid ${c?.quoteBorder || "#c0392b"};font-family:-apple-system,'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;">

@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.1.4 (2026-08-16)
+
+### 合规修复（Obsidian 插件库审核意见）
+- 📝 **description 不再包含 "Obsidian" 字样** — 官方规则：描述中提 Obsidian 属冗余（插件目录语境已隐含）
+- 🎨 **styles.css 移除 `!important`** — 预览面板宽度改用双通道渲染：预览时由 styles.css 控制宽度（移动端自适应无需 !important），导出/复制/草稿仍内联 `max-width:677px`（微信编辑器不认外部 CSS）
+- 📖 **README 增加英文版块** — 官方要求插件目录以英文为主，README 必须含英文描述（中文翻译保留）
+
+### 其他
+- README 移除对不存在 GUIDE.md 的失效引用
+
 ## v1.1.3 (2026-08-16)
 
 ### 合规修复

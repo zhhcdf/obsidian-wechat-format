@@ -1,5 +1,24 @@
 # WeChat Format — Obsidian 微信公众号排版插件
 
+> **English** · 中文（见下方）
+
+**WeChat Format** turns your Markdown notes into beautifully formatted WeChat Official Account articles. Format once, copy the HTML, and paste it straight into the WeChat editor to publish — no manual styling needed.
+
+- 🎨 6 built-in themes designed for WeChat reading
+- 📐 Automatic styling for headings, quotes, code blocks, tables, lists and images
+- 📱 Live preview panel showing the final WeChat look
+- 📋 One-click copy of WeChat-compatible HTML
+- 💾 Export to a standalone HTML file
+- 📤 Send directly to your WeChat draft box
+- ⚙️ Highly customizable: font size, line height, image width, first-line indent, custom CSS
+- 📎 Optional follow-QR footer with custom text
+
+**Install**: search "WeChat Format" in the community plugin marketplace, or copy the release files into `.obsidian/plugins/wechat-format/`. Requires Obsidian 0.15.0+.
+
+简明中文介绍如下:
+
+---
+
 一键将 Obsidian Markdown 排版为微信公众号文章格式。**复制即用，粘帖到公众号编辑器即可发布。**
 
 ## ✨ 功能
@@ -113,8 +132,8 @@ wechat-format/
 ├── styles.css         # 预览面板样式
 ├── package.json       # 构建配置
 ├── CHANGELOG.md       # 更新日志
-├── README.md          # 快速入门
-└── GUIDE.md           # 详细使用指南
+├── README.md       # 快速入门
+└── GUIDE.md        # （预留）详细使用指南
 ```
 
 ### 核心流程
@@ -138,7 +157,7 @@ npm run dev
 
 ## 📖 详细使用指南
 
-如需更详细的说明（API 配置、封面设置、常见问题等），请参阅 **[GUIDE.md](./GUIDE.md)**。
+如需更详细的说明（设置项详解等），可查阅插件设置面板中的说明文字。
 
 ## ⚠️ 注意事项
 
