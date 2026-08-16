@@ -2,3 +2,8 @@ node_modules/
 .env
 *.local
 .DS_Store
+test-*.js
+test-*.ts
+test_*.js
+test_*.ts
+test_*.py
