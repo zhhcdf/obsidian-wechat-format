@@ -1,4 +1,10 @@
 {
+  "name": "obsidian-wechat-format",
+  "version": "1.1.4",
+  "description": "Format Markdown notes into WeChat article style",
+  "scripts": {
+    "build": "esbuild main.ts --bundle --external:obsidian --format=cjs --outfile=main.js"
+  },
   "devDependencies": {
     "esbuild": "^0.28.1",
     "obsidian": "^1.13.1"
