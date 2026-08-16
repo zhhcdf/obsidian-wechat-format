@@ -1111,7 +1111,7 @@ class WeChatApi {
 		try {
 			const app = (globalThis as any).app;
 			if (app?.vault) {
-				const debugPath = `.obsidian/plugins/obsidian-wechat-format/debug-payload.json`;
+				const debugPath = `.obsidian/plugins/wechat-format/debug-payload.json`;
 				await app.vault.adapter.write(debugPath, JSON.stringify({
 					titleLen: safeTitle.length,
 					contentLen: safeContent.length,

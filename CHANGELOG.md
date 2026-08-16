@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.2 (2026-08-16)
+
+### 合规修复
+- 🔧 **插件 ID 合规** — `obsidian-wechat-format` → `wechat-format`（Obsidian 官方 manifest 规则：ID 不能包含 "obsidian"）。同步更新安装路径与调试日志路径
+
 ## v1.1.1 (2026-08-16)
 
 ### 问题修复

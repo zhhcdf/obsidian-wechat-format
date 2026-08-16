@@ -97,7 +97,7 @@
 ### 方法二：手动安装
 
 1. 下载本插件的最新 Release
-2. 解压到 `.obsidian/plugins/obsidian-wechat-format/`
+2. 解压到 `.obsidian/plugins/wechat-format/`
 3. 在 Obsidian 设置中启用插件
 
 ### 方法三：BRAT 安装
@@ -107,7 +107,7 @@
 ## 🏗️ 技术架构
 
 ```
-obsidian-wechat-format/
+wechat-format/
 ├── manifest.json      # 插件元数据
 ├── main.ts            # 核心 TS 源码（编译后为 main.js）
 ├── styles.css         # 预览面板样式
