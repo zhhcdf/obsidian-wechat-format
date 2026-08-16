@@ -1937,25 +1937,25 @@ class WeChatFormatPlugin extends Plugin {
 
 		// Commands
 		this.addCommand({
-			id: 'wechat-format-copy',
+			id: 'copy-format',
 			name: '📋 复制排版到剪贴板（WeChat Format）',
 			editorCallback: () => this.formatToClipboard(),
 		});
 
 		this.addCommand({
-			id: 'wechat-format-preview',
+			id: 'open-preview',
 			name: '🖼️ 打开公众号排版预览面板',
 			callback: () => this.openPreview(),
 		});
 
 		this.addCommand({
-			id: 'wechat-format-export',
+			id: 'export-html',
 			name: '💾 导出为公众号 HTML 文件',
 			editorCallback: () => this.exportHTML(),
 		});
 
 		this.addCommand({
-			id: 'wechat-format-send-draft',
+			id: 'send-draft',
 			name: '📤 发送到公众号草稿箱',
 			editorCallback: () => this.sendToDraft(),
 		});

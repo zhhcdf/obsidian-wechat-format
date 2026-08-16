@@ -1,9 +1,9 @@
 {
 	"id": "wechat-format",
-	"name": "WeChat Format 公众号排版",
-	"version": "1.1.2",
+	"name": "WeChat Format",
+	"version": "1.1.3",
 	"minAppVersion": "0.15.0",
-	"description": "将 Obsidian Markdown 一键排版为微信公众号文章格式，支持多种主题、标题样式、代码块装饰、实时预览等。复制即用，粘帖到公众号编辑器即可发布。",
+	"description": "Format Obsidian Markdown notes into WeChat article style. Supports multiple themes, heading styles, code block decorations, and live preview. Copy and paste directly into the WeChat editor to publish.",
 	"author": "zhhcdf",
 	"authorUrl": "https://github.com/zhhcdf",
 	"isDesktopOnly": false

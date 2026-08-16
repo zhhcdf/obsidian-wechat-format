@@ -1571,22 +1571,22 @@ var WeChatFormatPlugin = class extends Plugin {
       this.settings.thumbMediaId
     );
     this.addCommand({
-      id: "wechat-format-copy",
+      id: "copy-format",
       name: "\u{1F4CB} \u590D\u5236\u6392\u7248\u5230\u526A\u8D34\u677F\uFF08WeChat Format\uFF09",
       editorCallback: () => this.formatToClipboard()
     });
     this.addCommand({
-      id: "wechat-format-preview",
+      id: "open-preview",
       name: "\u{1F5BC}\uFE0F \u6253\u5F00\u516C\u4F17\u53F7\u6392\u7248\u9884\u89C8\u9762\u677F",
       callback: () => this.openPreview()
     });
     this.addCommand({
-      id: "wechat-format-export",
+      id: "export-html",
       name: "\u{1F4BE} \u5BFC\u51FA\u4E3A\u516C\u4F17\u53F7 HTML \u6587\u4EF6",
       editorCallback: () => this.exportHTML()
     });
     this.addCommand({
-      id: "wechat-format-send-draft",
+      id: "send-draft",
       name: "\u{1F4E4} \u53D1\u9001\u5230\u516C\u4F17\u53F7\u8349\u7A3F\u7BB1",
       editorCallback: () => this.sendToDraft()
     });

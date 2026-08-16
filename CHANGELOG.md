@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.3 (2026-08-16)
+
+### 合规修复
+- 🔧 **插件名称合规** — `WeChat Format 公众号排版` → `WeChat Format`（Obsidian 官方 manifest 规则：name 只允许 Basic Latin 字符，禁止中文/emoji/特殊字符）
+- 🌐 **描述转英文** — description 改为英文并控制字符数（官方要求 ≤250 字符、以句号结尾、避免 emoji）
+- 🏷️ **命令 ID 合规** — 移除命令 ID 中的插件 ID 前缀（官方规则：Obsidian 自动给命令 ID 加插件前缀，不可自行包含）。命令显示名不变，已绑定的快捷键需重新绑定
+
 ## v1.1.2 (2026-08-16)
 
 ### 合规修复
